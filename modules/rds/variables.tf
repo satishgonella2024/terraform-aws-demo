@@ -1,0 +1,10 @@
+variable "vpc_id" {}
+variable "db_engine" {}
+variable "db_instance_type" {}
+variable "db_allocated_storage" {}
+variable "db_name" {}
+variable "db_username" {}
+variable "db_password" {}
+variable "db_port" {}
+variable "allowed_cidrs" {}
+variable "private_db_subnet_ids" {}

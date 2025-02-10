@@ -1,44 +1,47 @@
 output "vpc_id" {
-  description = "The ID of the VPC"
-  value       = aws_vpc.learning_vpc_01.id
+  value = module.vpc.vpc_id
 }
 
 output "igw_id" {
-  description = "The ID of the Internet Gateway"
-  value       = aws_internet_gateway.learning_igw_01.id
+  value = module.vpc.igw_id
 }
 
-# Outputs for Public Subnets
 output "public_subnet_ids" {
-  description = "IDs of the public subnets"
-  value       = aws_subnet.public_subnets[*].id
+  value = module.vpc.public_subnet_ids
 }
 
-# Outputs for Private Subnets
 output "private_app_subnets" {
-  description = "IDs of the private subnets"
-  value       = aws_subnet.private_app_subnets[*].id
+  value = module.vpc.private_subnet_ids
 }
 
-# Outputs for Private DB Subnets
 output "private_db_subnets" {
-  description = "IDs of the private subnets"
-  value       = aws_subnet.private_db_subnets[*].id
+  value = module.vpc.private_subnet_ids
 }
 
-# Outputs for Public Route Table
 output "public_route_table_id" {
-  description = "ID of the public route table"
-  value       = aws_route_table.public_rt.id
+  value = module.vpc.public_route_table_id
 }
 
-# Outputs for Private Route Table
 output "private_route_table_id" {
-  description = "ID of the private route table"
-  value       = aws_route_table.private_rt.id
+  value = module.vpc.private_route_table_id
+}
+
+output "alb_dns_name" {
+  value = module.alb.alb_dns
 }
 
 output "app_target_group_arn" {
-  description = "The ARN of the ALB Target Group"
-  value       = aws_lb_target_group.app_target_group.arn
+  value = module.alb.alb_target_group_arn
+}
+
+output "rds_endpoint" {
+  value = module.rds.rds_endpoint
+}
+
+output "bastion_host_id" {
+  value = module.ec2.bastion_id
+}
+
+output "backend_server_id" {
+  value = module.ec2.backend_id
 }
