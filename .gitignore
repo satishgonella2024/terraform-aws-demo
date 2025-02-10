@@ -1,0 +1,13 @@
+# Terraform files to ignore
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Ignore sensitive SSH keys
+terraform-key
+terraform-key.pub
+
+# Ignore logs and temp files
+*.log
+*.bak
