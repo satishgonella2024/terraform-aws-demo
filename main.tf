@@ -1,10 +1,10 @@
 module "vpc" {
   source          = "./modules/vpc"
-  vpc_cidr        = "10.0.0.0/16"
-  vpc_name        = "learning_vpc"
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  private_subnets = ["10.0.10.0/24", "10.0.20.0/24", "10.0.30.0/24"]
-  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"] # ✅ Ensure 3 AZs are passed
+  vpc_cidr        = lookup(var.vpc_cidr, terraform.workspace, "10.0.0.0/16")
+  vpc_name        = "learning_vpc-${terraform.workspace}"
+  public_subnets  = lookup(var.public_subnets, terraform.workspace, ["10.0.1.0/24"])
+  private_subnets = lookup(var.private_subnets, terraform.workspace, ["10.0.10.0/24"])
+  azs             = lookup(var.azs, terraform.workspace, ["us-east-1a"]) # ✅ Dynamically select AZs
 }
 
 module "security_groups" {
@@ -14,14 +14,14 @@ module "security_groups" {
 
 module "ssh_key" {
   source          = "./modules/ssh_key"
-  key_name        = "terraform-key"
+  key_name        = "terraform-key-${terraform.workspace}" # ✅ Ensure unique key per workspace
   public_key_path = "${path.module}/terraform-key.pub"
 }
 
 module "ec2" {
   source            = "./modules/ec2"
   ami               = "ami-0c104f6f4a5d9d1d5"
-  instance_type     = "t2.micro"
+  instance_type     = lookup(var.instance_type, terraform.workspace, "t2.micro") # ✅ Select instance type dynamically
   public_subnet_id  = module.vpc.public_subnet_ids[0]
   private_subnet_id = module.vpc.private_subnet_ids[0]
   ssh_key           = module.ssh_key.key_name
@@ -30,6 +30,7 @@ module "ec2" {
 
 module "alb" {
   source              = "./modules/alb"
+  count               = var.enable_alb[terraform.workspace] ? 1 : 0 # ✅ Create only if enabled
   public_subnet_ids   = module.vpc.public_subnet_ids
   alb_security_group  = module.security_groups.alb_sg_id
   vpc_id              = module.vpc.vpc_id
@@ -47,5 +48,5 @@ module "rds" {
   db_password           = "SecurePassword123!"
   db_port               = 3306
   allowed_cidrs         = ["10.0.0.0/16"]
-  private_db_subnet_ids = module.vpc.private_subnet_ids
+  private_db_subnet_ids = module.vpc.private_db_subnets
 }

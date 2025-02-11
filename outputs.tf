@@ -15,7 +15,7 @@ output "private_app_subnets" {
 }
 
 output "private_db_subnets" {
-  value = module.vpc.private_subnet_ids
+  value = module.vpc.private_db_subnets
 }
 
 output "public_route_table_id" {
@@ -27,11 +27,11 @@ output "private_route_table_id" {
 }
 
 output "alb_dns_name" {
-  value = module.alb.alb_dns
+  value = try(module.alb[0].alb_dns, null) # ✅ Handle count-based ALB
 }
 
 output "app_target_group_arn" {
-  value = module.alb.alb_target_group_arn
+  value = try(module.alb[0].alb_target_group_arn, null) # ✅ Handle count-based ALB
 }
 
 output "rds_endpoint" {
