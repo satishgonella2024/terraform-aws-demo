@@ -1,9 +1,16 @@
 resource "aws_lb" "app_alb" {
-  name               = "app-load-balancer"
+  count = var.enable_alb[terraform.workspace] ? 1 : 0 # ✅ Only create in `prod`
+
+  name               = "app-load-balancer-${terraform.workspace}"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [var.alb_security_group]
-  subnets            = var.public_subnet_ids
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = module.vpc.public_subnet_ids
+
+  tags = {
+    Name        = "app-alb-${terraform.workspace}"
+    Environment = terraform.workspace
+  }
 }
 
 resource "aws_lb_target_group" "app_tg" {

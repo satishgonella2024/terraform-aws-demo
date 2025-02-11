@@ -1,29 +1,38 @@
+# VPC Configuration
 variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
-  type        = string
-  default     = "10.0.0.0/16"  # ✅ Set a default CIDR block
+  description = "VPC CIDR block per workspace"
+  type        = map(string)
+  default = {
+    dev     = "10.0.0.0/24"
+    staging = "10.0.0.0/22"
+    prod    = "10.0.0.0/16"
+  }
 }
 
 variable "vpc_name" {
-  description = "Name of the VPC"
+  description = "VPC Name"
   type        = string
-  default     = "learning_vpc"  # ✅ Set a default VPC name
+  default     = "terraform-vpc"
 }
 
-variable "public_subnets" {
-  description = "List of public subnet CIDRs"
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]  # ✅ Ensure 3 subnets
+# Subnet Count Configuration
+variable "subnet_count" {
+  description = "Number of subnets per environment"
+  type        = map(number)
+  default = {
+    dev     = 1
+    staging = 2
+    prod    = 3
+  }
 }
 
-variable "private_subnets" {
-  description = "List of private subnet CIDRs"
-  type        = list(string)
-  default     = ["10.0.10.0/24", "10.0.20.0/24", "10.0.30.0/24"]  # ✅ Ensure 3 subnets
-}
-
+# Availability Zones Configuration
 variable "azs" {
-  description = "List of availability zones"
-  type        = list(string)
-  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]  # ✅ Ensure 3 AZs
+  description = "List of Availability Zones per workspace"
+  type        = map(list(string))
+  default = {
+    dev     = ["us-east-1a"]
+    staging = ["us-east-1a", "us-east-1b"]
+    prod    = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  }
 }

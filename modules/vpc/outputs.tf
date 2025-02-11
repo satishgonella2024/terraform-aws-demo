@@ -19,5 +19,9 @@ output "public_route_table_id" {
 }
 
 output "private_route_table_id" {
-  value = aws_route_table.private_rt.id
+  value = terraform.workspace == "prod" ? aws_route_table.private_rt[0].id : null
+}
+
+output "nat_gateway_id" {
+  value = terraform.workspace == "prod" ? aws_nat_gateway.nat_gateway[0].id : null
 }
